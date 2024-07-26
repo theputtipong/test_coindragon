@@ -1,0 +1,143 @@
+# Widget Lifecycle
+
+---
+
+## Explain the lifecycle of a StatefulWidget. What are the key lifecycle methods you need to be aware of, and when do you use them?
+
+1.createState
+When a new "StatefulWidget" is created "createState" is called after that before "initState"
+is called.
+2.initState
+This function is called only once in the lifecycle and the method will have a context
+available (though it is not recommended to use it because some data may still be
+initializing).
+3.didChangeDependencies
+This function is called after "initState" completes and will be called again whenever the
+data that affects the widget is updated.
+4.didUpdateWidget
+This function is called when the parent widget changes and requires the widget to re-draw
+the UI will used when want to compare the oldWidget parameter with the current widget to
+see if there are any differences.
+5.build
+Used to create the widget and if you want it to re-build you can do so by calling "setState".
+6.deactivate
+Called when an object is removed from the tree before dispose is called.
+7.dispose
+Called when a widget is about to disappear from the screen.
+Should be overridden to clean up resources (e.g., listeners, controllers).
+
+---
+
+## Given the following scenario, which lifecycle method would you use and why?
+
+You need to fetch data from an API when the widget is first created but not on subsequent rebuilds.
+I will use initState because it runs only once when the StatefulWidget is first created. I can handle any errors at this point.
+
+@override
+void initState() {
+// TODO: implement initState
+super.initState();
+throw ("Error thrown from initState()");
+}
+
+---
+
+# State Management
+
+---
+
+## Consider you are using the Provider package. How would you structure your app to manage the state of a shopping cart? Describe your approach and the classes you would create.
+
+---
+
+## Explain the concept of ChangeNotifier and why it is used in Flutter state management. Provide an example of how you would implement it in a simple counter app.
+
+---
+
+# Performance Optimization
+
+---
+
+## You notice that your Flutter app is janky and has performance issues. What steps would you take to diagnose and improve the app's performance?
+
+---
+
+## Explain the difference between RepaintBoundary and RenderObject. How do you use RepaintBoundary to optimize performance in a Flutter application?
+
+---
+
+# Navigation and Routing
+
+---
+
+## Describe how you would implement deep linking in a Flutter application. What are the key components involved, and how would you handle different routes?
+
+---
+
+## Explain how you would manage navigation state in a complex app with nested navigators. What are some best practices to follow?
+
+---
+
+# Custom Widgets and UI
+
+---
+
+## You are tasked with creating a custom reusable widget for a button that has an icon and text, with customizable colors and sizes. How would you implement this? Provide a code example.
+
+---
+
+## Explain how you would implement a responsive layout in Flutter to support different screen sizes and orientations, including tablets and foldable devices.
+
+---
+
+# Animations
+
+---
+
+## Describe the differences between implicit and explicit animations in Flutter. Provide an example of when you would use each type and why.
+
+---
+
+## You need to create a complex animation that involves multiple elements moving and changing size simultaneously. How would you approach this in Flutter? Explain your solution and provide a code example if possible.
+
+---
+
+# Testing / QC
+
+---
+
+## How do you write a unit test for a function that fetches data from an API in Flutter? Describe the process and provide a code example.
+
+---
+
+## Explain the concept of widget testing in Flutter. How would you test a widget that has a button which, when pressed, fetches data and displays it? Provide a code example.
+
+---
+
+# Coin Dragon Code Analysis
+
+## 1. getWallet() vs getWalletStream()
+
+### 1. Based on the above code sample, what can you tell me about the difference between getWallet() and getWalletStream()? What are good reasons to use one over the other?
+
+---
+
+## 2. Erroneous Widget
+
+### 2. Identify the mistake in the above code and explain why it is incorrect.
+
+---
+
+## 3. Asynchronous setState sample
+
+### 3. Identify the potential issue in the above code and explain why it is incorrect. Provide a solution to fix the issue.
+
+---
+
+## 4.1 WSConnector Class (use of WebSocketChannel library)
+
+### 4.1 Can you briefly describe what you see in the above code snippet?
+
+### 4.2 Can you explain the above code? What is \_initWsConnection()'s function? What happens when \_wsConnector.start() is executed?
+
+---
