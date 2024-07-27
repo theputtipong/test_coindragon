@@ -30,14 +30,14 @@ Should be overridden to clean up resources (e.g., listeners, controllers).
 
 ## Given the following scenario, which lifecycle method would you use and why?
 
-You need to fetch data from an API when the widget is first created but not on subsequent rebuilds.
-I will use initState because it runs only once when the StatefulWidget is first created. I can handle any errors at this point.
+### You need to fetch data from an API when the widget is first created but not on subsequent rebuilds.
+
+I will use initState because it runs only once when the StatefulWidget is first created.
 
 @override
 void initState() {
-// TODO: implement initState
+// TODO: implement fetch API function
 super.initState();
-throw ("Error thrown from initState()");
 }
 
 ---
@@ -48,17 +48,95 @@ throw ("Error thrown from initState()");
 
 ## Consider you are using the Provider package. How would you structure your app to manage the state of a shopping cart? Describe your approach and the classes you would create.
 
+about feat cart i will create 3 class like MVVM (Disregard the counting class productmodel and class store because a part that complements the cart.)
+
+1. class model cart for manage object
+   - in this class i will use it to handle store and in store i will use it to handle product with display on view.
+2. class view for display with STL
+   - in this class i will use it to display what i have in cart.
+   - view by group store with total price and total quantity for each store.
+   - and user can selected store or product to pay with this bill or not.
+3. class viewmodel (controller) with handle every action
+   - in this class i will use it to handle cart function add , remove , payType , deliveryType (express , normal or other) or selected store or product to pay per bill.
+   - function cal total price and total quantity only user selected store or product to pay per bill.
+
+code example
+
 ---
 
 ## Explain the concept of ChangeNotifier and why it is used in Flutter state management. Provide an example of how you would implement it in a simple counter app.
 
----
+ChangeNotifier It is a class that notifies changes to its listeners in other words If something is ChangeNotifier You can subscribe to its changes.
+
+We use it because if we want to change the value in a specific widget ChangeNotifier can be do but using setStage will re-render with build method.
+
+code example
+void main() {
+runApp(
+MaterialApp(
+home: ChangeNotifierProvider(
+create: (context) => CounterViewModel(),
+child: const HomeView(),
+),
+),
+);
+}
+
+class HomeView extends StatelessWidget {
+const HomeView({super.key});
+
+@override
+Widget build(BuildContext context) {
+final counter = Provider.of<CounterViewModel>(context, listen: false);
+return Scaffold(
+body: Center(
+child: Column(
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+const Text(
+'You have pushed the button this many times:',
+),
+Consumer<CounterViewModel>(
+builder: (_, value, __) => Text(
+counter._counter.toString(),
+),
+),
+],
+),
+),
+floatingActionButton: FloatingActionButton(
+onPressed: counter.incrementCounter,
+child: const Icon(Icons.add),
+),
+);
+}
+}
+
+class CounterViewModel with ChangeNotifier {
+int \_counter = 0;
+
+incrementCounter() {
+\_counter++;
+notifyListeners();
+}
+}
 
 # Performance Optimization
 
 ---
 
 ## You notice that your Flutter app is janky and has performance issues. What steps would you take to diagnose and improve the app's performance?
+
+run app with profile mode and view with Flutter DevTools
+
+- If it about performance
+  1 Analyze CPU and mem usage looking for unusual resource usage such as mem management or heavy computation when opening problematic pages.
+  2 Look at ListView or others as a builder or not.
+  3 Declare variables correctly: const,final
+
+- If it about jerky
+  1 Check that the frame rate of the page where the problem was found, whether it is abnormal with other pages or not
+  2 See if it's because of the gif or animation.
 
 ---
 
