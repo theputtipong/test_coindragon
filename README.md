@@ -142,6 +142,10 @@ run app with profile mode and view with Flutter DevTools
 
 ## Explain the difference between RepaintBoundary and RenderObject. How do you use RepaintBoundary to optimize performance in a Flutter application?
 
+RenderObject is Flutter low-level rendering system that manages the layout and drawing of widgets within the render tree, but RepaintBoundary ensures that only subtrees within it bounds are repainted for improving render performance.
+
+I might use RepaintBoundary for widget animations or widgets that change frequently (either with lag or when action is taken) inside a complex widget.
+
 ---
 
 # Navigation and Routing
@@ -150,9 +154,22 @@ run app with profile mode and view with Flutter DevTools
 
 ## Describe how you would implement deep linking in a Flutter application. What are the key components involved, and how would you handle different routes?
 
+ยกตัวอย่างเป็น app ที่เกี่ยวกับ content
+ในกรณีที่เรากำหนด deep link ให้สามารถเปิด content ผ่าน id ได้ เมื่อผู้ใช้กด link url ที่กำหนดก็จะมีตัวเลือกให้เปิดเข้าแอปได้ โดยประกอบด้วย
+
+scheme = "https"
+host = "yourhostname.com"
+pathPattern = "/content/.\*"
+
+และหากต้องการจัดการเส้นทางไปยังหน้าต่างๆก็จะไปสร้างฟังก์ชั่นเช็คก่อน runapp โดยฉันจะใช้ lib uni_links2 เพื่อเช็ค param ของ url ก่อน route ไปยังจุดต่างๆ
+
+code example
+
 ---
 
 ## Explain how you would manage navigation state in a complex app with nested navigators. What are some best practices to follow?
+
+https://docs.flutter.dev/cookbook/effects/nested-nav
 
 ---
 
