@@ -358,7 +358,7 @@ style: textStyle,
 
 ## Explain how you would implement a responsive layout in Flutter to support different screen sizes and orientations, including tablets and foldable devices.
 
-i will use Get lib to handle this case for check from tablet and foldable or mobile
+i will use Get lib to handle this case for check is mobile or desktop and use screen size to handle is tablet or foldable under if condition is mobile again
 
 code example
 final scrWidth = Get.size.width;

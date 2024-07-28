@@ -33,7 +33,7 @@ class Approute {
   static List<GetPage> get routeList => [
         GetPage(
           name: Approute.routeHome,
-          page: () => const HomeView(),
+          page: () => HomeView(),
           binding: BindingsBuilder(
             () {
               Get.put(LayoutController());
