@@ -30,15 +30,15 @@ class Approute {
     );
   }
 
-  static List<GetPage> get routeList => [
-        GetPage(
-          name: Approute.routeHome,
-          page: () => HomeView(),
-          binding: BindingsBuilder(
-            () {
-              Get.put(LayoutController());
-            },
-          ),
-        ),
-      ];
+  // static List<GetPage> get routeList => [
+  //       GetPage(
+  //         name: Approute.routeHome,
+  //         page: () => HomeView(),
+  //         binding: BindingsBuilder(
+  //           () {
+  //             Get.put(LayoutController());
+  //           },
+  //         ),
+  //       ),
+  //     ];
 }

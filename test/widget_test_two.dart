@@ -6,16 +6,52 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   group('API Load Test', () {
-    test('test call API openlibrary and get data', () async {
-      BookModel? data = await callApiData();
+    BookModel? data;
+
+    testWidgets('test call API openlibrary when tap widget', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ElevatedButton(
+              onPressed: () async {
+                data = await callApiData();
+              },
+              child: const Text('Tap me'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(ElevatedButton));
+
       expect(data, isNotNull);
+
       expect(data?.entries, isNotEmpty);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ListView.builder(
+              itemCount: data?.entries?.length,
+              itemBuilder: (context, index) {
+                Entry value = data!.entries![index];
+                return Text(value.name ?? '');
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Text), findsNWidgets(data!.entries!.length));
+
+      expect(data!.entries!.length, data!.entries!.length);
     });
   });
 }

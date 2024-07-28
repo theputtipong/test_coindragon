@@ -6,7 +6,7 @@
 
 1.createState
 When a new "StatefulWidget" is created "createState" is called after that before "initState"
-is called.
+is called. with this step other page can past value with constructor
 2.initState
 This function is called only once in the lifecycle and the method will have a context
 available (though it is not recommended to use it because some data may still be
@@ -60,7 +60,134 @@ about feat cart i will create 3 class like MVVM (Disregard the counting class pr
    - in this class i will use it to handle cart function add , remove , payType , deliveryType (express , normal or other) or selected store or product to pay per bill.
    - function cal total price and total quantity only user selected store or product to pay per bill.
 
-code example
+code example with viewmodel and model
+class ProductModel {
+int? productId;
+String? name;
+double? price;
+String? imgUrl;
+int? quantity;
+int? storeId;
+bool selected = true;
+ProductModel({
+this.productId,
+this.name,
+this.price,
+this.imgUrl,
+this.quantity,
+this.storeId,
+required this.selected,
+});
+}
+
+class StoreModel {
+List<ProductModel>? products;
+String? name;
+String? imgUrl;
+double? totalPrice;
+double? totalQuantity;
+bool selected = true;
+StoreModel({
+this.products,
+this.name,
+this.imgUrl,
+this.totalPrice,
+this.totalQuantity,
+required this.selected,
+});
+}
+
+class CartModel {
+List<StoreModel>? stores;
+double? totalPrice;
+double? totalQuantity;
+String? payType;
+String? deliveryType;
+CartModel({
+this.stores,
+this.totalPrice,
+this.totalQuantity,
+this.payType,
+});
+}
+
+class CartViewModel with ChangeNotifier {
+List<StoreModel> stores = [];
+
+double? totalPrice;
+
+double? totalQuantity;
+
+addStoreToCart(StoreModel store) {
+stores.add(store);
+notifyListeners();
+}
+
+removeStoreFromCart(StoreModel store) {
+stores.remove(store);
+notifyListeners();
+}
+
+selectedStore(StoreModel store) {
+store.selected = !store.selected;
+notifyListeners();
+}
+
+clearCart() {
+stores = [];
+totalPrice = 0;
+totalQuantity = 0;
+notifyListeners();
+}
+
+calculateTotalFromSelectedStore() {
+totalPrice = 0;
+totalQuantity = 0;
+for (var element in stores) {
+if (element.selected == true) {
+totalPrice = (totalPrice ?? 0) + (element.totalPrice ?? 0);
+totalQuantity = (totalQuantity ?? 0) + (element.totalQuantity ?? 0);
+}
+}
+notifyListeners();
+}
+
+addProductToCart(StoreModel store, int productId) {
+for (ProductModel element in store.products?.toList() ?? []) {
+if (element.productId == productId) {
+element.quantity = element.quantity! + 1;
+store.totalPrice = element.price! \* element.quantity!;
+store.totalQuantity = element.quantity! + 1;
+break;
+}
+}
+calculateTotalFromSelectedStore();
+}
+
+removeProductFromCart(StoreModel store, int productId) {
+for (ProductModel element in store.products?.toList() ?? []) {
+if (element.productId == productId) {
+element.quantity = element.quantity! - 1;
+store.totalPrice = element.price! \* element.quantity!;
+store.totalQuantity = element.quantity! - 1;
+break;
+}
+}
+calculateTotalFromSelectedStore();
+}
+
+selectedProduct(StoreModel store, int productId) {
+for (ProductModel element in store.products?.toList() ?? []) {
+if (element.productId == productId) {
+element.selected = !element.selected;
+break;
+}
+}
+calculateTotalFromSelectedStore();
+}
+
+...other function for support
+}
 
 ---
 
@@ -377,13 +504,161 @@ But case Explicit is used when i want it to be more complex, like when i click o
 
 ## You need to create a complex animation that involves multiple elements moving and changing size simultaneously. How would you approach this in Flutter? Explain your solution and provide a code example if possible.
 
-for this case i will use Explicit Animations
+for this case i will use Implicit Animations because it support you requirement
+
+code example
+class ShowMySimpleAnimation extends StatefulWidget {
+const ShowMySimpleAnimation({super.key});
+
+@override
+\_ShowMySimpleAnimationState createState() => \_ShowMySimpleAnimationState();
+}
+
+class \_ShowMySimpleAnimationState extends State<ShowMySimpleAnimation> {
+bool selected = false;
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+body: SizedBox(
+width: context.mediaQuery.size.width,
+height: context.mediaQuery.size.height,
+child: Stack(alignment: Alignment.center, children: [
+AnimatedPositioned(
+width: selected ? 200.0 : 50.0,
+height: selected ? 50.0 : 200.0,
+top: selected ? 50.0 : 150.0,
+duration: const Duration(seconds: 2),
+curve: Curves.fastOutSlowIn,
+child: GestureDetector(
+onTap: () {
+setState(() {
+selected = !selected;
+});
+},
+child: const ColoredBox(
+color: Colors.blue,
+child: Center(child: Text('Tap me')),
+),
+),
+),
+]),
+),
+);
+}
+}
 
 # Testing / QC
 
 ---
 
 ## How do you write a unit test for a function that fetches data from an API in Flutter? Describe the process and provide a code example.
+
+If it's just a unit test under a feature i usually write tests directly by calling the function or creating it and using the model to handle the data.
+
+code example
+
+import 'dart:convert';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
+
+void main() {
+TestWidgetsFlutterBinding.ensureInitialized();
+group('API Load Test', () {
+test('test call API openlibrary and get data', () async {
+BookModel? data = await callApiData();
+expect(data, isNotNull);
+expect(data?.entries, isNotEmpty);
+});
+});
+}
+
+Future<BookModel?> callApiData() async {
+Request request = Request('GET', Uri.parse('http://openlibrary.org/people/george08/lists.json'));
+StreamedResponse response = await request.send();
+
+if (response.statusCode == 200) {
+BookModel data = bookModelFromJson(await response.stream.bytesToString());
+return data;
+} else {
+return null;
+}
+}
+
+BookModel bookModelFromJson(String str) => BookModel.fromJson(json.decode(str));
+
+String bookModelToJson(BookModel data) => json.encode(data.toJson());
+
+class BookModel {
+Links? links;
+int? size;
+List<Entry>? entries;
+
+BookModel({
+this.links,
+this.size,
+this.entries,
+});
+
+factory BookModel.fromJson(Map<String, dynamic> json) => BookModel(
+links: json["links"] == null ? null : Links.fromJson(json["links"]),
+size: json["size"],
+entries: json["entries"] == null ? [] : List<Entry>.from(json["entries"]!.map((x) => Entry.fromJson(x))),
+);
+
+Map<String, dynamic> toJson() => {
+"links": links?.toJson(),
+"size": size,
+"entries": entries == null ? [] : List<dynamic>.from(entries!.map((x) => x.toJson())),
+};
+}
+
+class Entry {
+String? url;
+String? fullUrl;
+String? name;
+int? seedCount;
+DateTime? lastUpdate;
+
+Entry({
+this.url,
+this.fullUrl,
+this.name,
+this.seedCount,
+this.lastUpdate,
+});
+
+factory Entry.fromJson(Map<String, dynamic> json) => Entry(
+url: json["url"],
+fullUrl: json["full_url"],
+name: json["name"],
+seedCount: json["seed_count"],
+lastUpdate: json["last_update"] == null ? null : DateTime.parse(json["last_update"]),
+);
+
+Map<String, dynamic> toJson() => {
+"url": url,
+"full_url": fullUrl,
+"name": name,
+"seed_count": seedCount,
+"last_update": lastUpdate?.toIso8601String(),
+};
+}
+
+class Links {
+String? self;
+
+Links({
+this.self,
+});
+
+factory Links.fromJson(Map<String, dynamic> json) => Links(
+self: json["self"],
+);
+
+Map<String, dynamic> toJson() => {
+"self": self,
+};
+}
 
 ---
 
@@ -461,6 +736,12 @@ style: const TextStyle(fontSize: 24),
 
 ### 4.1 Can you briefly describe what you see in the above code snippet?
 
+Check the backend via the websocket api and every 30 seconds check if it is still connected or not, if not, reconnect.
+
 ### 4.2 Can you explain the above code? What is \_initWsConnection()'s function? What happens when \_wsConnector.start() is executed?
 
----
+The function initWsConnection is the part of the WsConnector initialization that listens for data inside if it is closed.
+
+And when wsConnector.start() WsConnector it starts it platfrom can connect to server.
+
+ps. i not found WebSocketChannel library in pub dev i found only web_socket_channel and i think wsConnector.start() is same with wsConnector.connect(uri, protocols: protocols);

@@ -1,6 +1,7 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'approute.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -18,59 +19,100 @@ ScreenSize getSize(BuildContext context) {
 
 void main() {
   runApp(
-    // MaterialApp(
-    //   home: ChangeNotifierProvider(
-    //     create: (context) => CounterViewModel(),
-    //     child: const HomeView(),
-    //   ),
-    // home: Navigator(
-    //   key: navigatorKey,
-    //   initialRoute: Approute.routeHome,
-    //   onGenerateRoute: Approute.onGenerateRoute,
-    // ),
-    // home: ChangeNotifierProvider(
-    //   create: (context) => CartViewModel(),
-    //   child: const CartView(),
-    // ),
-    // ),
-    GetMaterialApp(
-      initialBinding: BindingsBuilder(
-        () {
-          Get.lazyPut<LayoutController>(() => LayoutController());
-        },
-      ),
-      initialRoute: Approute.routeHome,
-      getPages: Approute.routeList,
+    const MaterialApp(
+      home: ShowMySimpleAnimation(),
+      //   home: ChangeNotifierProvider(
+      //     create: (context) => CounterViewModel(),
+      //     child: const HomeView(),
+      //   ),
+      // home: Navigator(
+      //   key: navigatorKey,
+      //   initialRoute: Approute.routeHome,
+      //   onGenerateRoute: Approute.onGenerateRoute,
+      // ),
+      // home: ChangeNotifierProvider(
+      //   create: (context) => CartViewModel(),
+      //   child: const CartView(),
+      // ),
     ),
+    // GetMaterialApp(
+    //   initialBinding: BindingsBuilder(
+    //     () {
+    //       Get.lazyPut<LayoutController>(() => LayoutController());
+    //     },
+    //   ),
+    //   initialRoute: Approute.routeHome,
+    //   getPages: Approute.routeList,
+    // ),
   );
 }
 
-// class HomeView extends StatelessWidget {
-class HomeView extends GetResponsiveView<LayoutController> {
-  HomeView({super.key});
+// // class HomeView extends StatelessWidget {
+// class HomeView extends GetResponsiveView<LayoutController> {
+//   HomeView({super.key});
+
+//   @override
+//   Widget builder() {
+//     return Scaffold(
+//       body: handleScrWithPlatform(),
+//     );
+//   }
+
+//   handleScrWithPlatform() {
+//     if (GetPlatform.isMobile) {
+//       return const Center(
+//         child: Text(
+//           'this screen style support with mobile',
+//         ),
+//       );
+//     } else {
+//       //GetPlatform.isDesktop
+//       return const Center(
+//         child: Text(
+//           'this screen style support with desktop',
+//         ),
+//       );
+//     }
+//   }
+// }
+
+class ShowMySimpleAnimation extends StatefulWidget {
+  const ShowMySimpleAnimation({super.key});
 
   @override
-  Widget builder() {
-    return Scaffold(
-      body: handleScrWithPlatform(),
-    );
-  }
+  _ShowMySimpleAnimationState createState() => _ShowMySimpleAnimationState();
+}
 
-  handleScrWithPlatform() {
-    if (GetPlatform.isMobile) {
-      return const Center(
-        child: Text(
-          'this screen style support with mobile',
-        ),
-      );
-    } else {
-      //GetPlatform.isDesktop
-      return const Center(
-        child: Text(
-          'this screen style support with desktop',
-        ),
-      );
-    }
+class _ShowMySimpleAnimationState extends State<ShowMySimpleAnimation> {
+  bool selected = false;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SizedBox(
+        width: context.mediaQuery.size.width,
+        height: context.mediaQuery.size.height,
+        child: Stack(alignment: Alignment.center, children: [
+          AnimatedPositioned(
+            width: selected ? 200.0 : 50.0,
+            height: selected ? 50.0 : 200.0,
+            top: selected ? 50.0 : 150.0,
+            duration: const Duration(seconds: 2),
+            curve: Curves.fastOutSlowIn,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  selected = !selected;
+                });
+              },
+              child: const ColoredBox(
+                color: Colors.blue,
+                child: Center(child: Text('Tap me')),
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
   }
 }
 
