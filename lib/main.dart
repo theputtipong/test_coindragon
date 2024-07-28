@@ -6,6 +6,16 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 final layOut = Get.find<LayoutController>();
 
+enum ScreenSize { small, normal, large, extraLarge }
+
+ScreenSize getSize(BuildContext context) {
+  final deviceWidth = MediaQuery.sizeOf(context).shortestSide;
+  if (deviceWidth > 900) return ScreenSize.extraLarge;
+  if (deviceWidth > 600) return ScreenSize.large;
+  if (deviceWidth > 300) return ScreenSize.normal;
+  return ScreenSize.small;
+}
+
 void main() {
   runApp(
     // MaterialApp(

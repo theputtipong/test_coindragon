@@ -358,11 +358,10 @@ style: textStyle,
 
 ## Explain how you would implement a responsive layout in Flutter to support different screen sizes and orientations, including tablets and foldable devices.
 
-i will use Get lib to handle this case for check is mobile or desktop and use screen size to handle is tablet or foldable under if condition is mobile again
+for case ui support with multi screen i will use Get lib to handle this case for check is mobile or desktop and use screen size to handle is tablet or foldable or phone under if condition is mobile again.
+for case one screen support i will try to use mediaQuery to check width and height and cal with percen to display widget under column flex or expand widget.
 
 code example
-final scrWidth = Get.size.width;
-final scrHeight = Get.size.height;
 
 ---
 
@@ -372,11 +371,15 @@ final scrHeight = Get.size.height;
 
 ## Describe the differences between implicit and explicit animations in Flutter. Provide an example of when you would use each type and why.
 
----
+Implicit Animations is auto animation that will change when we change some value in widget
+Explicit Animations is manual animation that will change when we set it from controller and because controls we can customize everything we want for change the animations or make things more complicated.
+
+case Implicit i use it when i want a simple animation, like an ExpansionTile widget that gradually moves or when a toggle switch gradually changes color without using a controller to control it.
+But case Explicit is used when i want it to be more complex, like when i click on an image i want it to gradually expand while the image fade in and when i click the image again the image gradually shrinks and fades out using a control.
 
 ## You need to create a complex animation that involves multiple elements moving and changing size simultaneously. How would you approach this in Flutter? Explain your solution and provide a code example if possible.
 
----
+for this case i will use Explicit Animations
 
 # Testing / QC
 
@@ -396,13 +399,15 @@ final scrHeight = Get.size.height;
 
 ### 1. Based on the above code sample, what can you tell me about the difference between getWallet() and getWalletStream()? What are good reasons to use one over the other?
 
----
+.getWallet จะตรวจสอบละเอียดกว่าก่อน return wallet โดยภายใต้การตรวจสอบจะเช็คว่ามี wallet หรือไม่ หากไม่ก็จะเช็คเบอร์ว่ามีข้อมูลหรือไม่ หากไม่มีก็จะสร้างให้ใหม่ และ return wallet object หรือ null แต่ getWalletStream นั้นจะดึงข้อมูลว่ามีอยู่หรือไม่แบบตลอดเวลาภายใน steam widget แต่จะ return มาในรูปแบบของ snapshot ที่ต้องไป convert เป็น data ก่อนถึงจะนำไปใช้ได้
+
+เราสามารถใช้ทั้งสองร่วมกันได้เพราะ ในเคสที่ user login สองช่องทาง wallet ที่เติมจากช่องทางแรก ก็จะสามารถ trick ให้ ช่องทางที่สอง รับรู้ได้ผ่าน getWalletStream เช่นเดียวกับการที่ user ถูกปรับสถานะจาก enable เป็น disable ทั้งสองช่องทางจะต้องแสดงผลได้เหมือนกัน
 
 ## 2. Erroneous Widget
 
 ### 2. Identify the mistake in the above code and explain why it is incorrect.
 
----
+.การทำงานของ โค้ดด้านบนนั้นผิดเพราะเป็น STL ถ้าจะให้ถูกต้องและเรียบง่ายเพียงเปลี่ยนเป็น STF และเพิ่ม setStage เข้าไปยัง function \_incrementCouter โดยสาเหตุที่ STL นั้นผิดเพราะ STL จะถูก rander เพียงครั้งเดียวหลังจากเรียก จึงไม่สามารถอัพเดทค่าได้
 
 ## 3. Asynchronous setState sample
 
