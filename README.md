@@ -361,8 +361,6 @@ style: textStyle,
 for case ui support with multi screen i will use Get lib to handle this case for check is mobile or desktop and use screen size to handle is tablet or foldable or phone under if condition is mobile again.
 for case one screen support i will try to use mediaQuery to check width and height and cal with percen to display widget under column flex or expand widget.
 
-code example
-
 ---
 
 # Animations
@@ -399,19 +397,63 @@ for this case i will use Explicit Animations
 
 ### 1. Based on the above code sample, what can you tell me about the difference between getWallet() and getWalletStream()? What are good reasons to use one over the other?
 
-.getWallet จะตรวจสอบละเอียดกว่าก่อน return wallet โดยภายใต้การตรวจสอบจะเช็คว่ามี wallet หรือไม่ หากไม่ก็จะเช็คเบอร์ว่ามีข้อมูลหรือไม่ หากไม่มีก็จะสร้างให้ใหม่ และ return wallet object หรือ null แต่ getWalletStream นั้นจะดึงข้อมูลว่ามีอยู่หรือไม่แบบตลอดเวลาภายใน steam widget แต่จะ return มาในรูปแบบของ snapshot ที่ต้องไป convert เป็น data ก่อนถึงจะนำไปใช้ได้
+getWallet will check more carefully before returning the wallet. Under the check it will check if there is a wallet or not if not it will check if the member has phone data or not if not it will create a new one wallet and return the wallet object or null when user not have member phone data.
+But getWalletStream will retrieve the data whether it exists or not all the time within the steam widget but it will return in the form of a snapshot that must be converted to data before it can be used.
 
-เราสามารถใช้ทั้งสองร่วมกันได้เพราะ ในเคสที่ user login สองช่องทาง wallet ที่เติมจากช่องทางแรก ก็จะสามารถ trick ให้ ช่องทางที่สอง รับรู้ได้ผ่าน getWalletStream เช่นเดียวกับการที่ user ถูกปรับสถานะจาก enable เป็น disable ทั้งสองช่องทางจะต้องแสดงผลได้เหมือนกัน
+We can use both together because in the case that the user logs in through 2 platfrom or 2 phone the wallet that was added from the first platfrom can be tricked to let the second channel know via getWalletStream similarly when the user is changed from enabled to disabled both platfrom must be able to display the same results.
 
 ## 2. Erroneous Widget
 
 ### 2. Identify the mistake in the above code and explain why it is incorrect.
 
-.การทำงานของ โค้ดด้านบนนั้นผิดเพราะเป็น STL ถ้าจะให้ถูกต้องและเรียบง่ายเพียงเปลี่ยนเป็น STF และเพิ่ม setStage เข้าไปยัง function \_incrementCouter โดยสาเหตุที่ STL นั้นผิดเพราะ STL จะถูก rander เพียงครั้งเดียวหลังจากเรียก จึงไม่สามารถอัพเดทค่าได้
+code is wrong because it is STL to make it correct and simple just change it to STF and add setStage to the incrementCouter function.
+reason why STL is wrong is because STL is only rendered once after being called so it cannot update the value.
 
 ## 3. Asynchronous setState sample
 
 ### 3. Identify the potential issue in the above code and explain why it is incorrect. Provide a solution to fix the issue.
+
+I think this part might be a problem where the function is not finished yet but the widget in the tree is lost (maybe from page change or something) and ideally I would add a const to the constant variable and add an if(mounted) before setStage to make sure the widget is still there.
+
+code example
+class MyStatefulWidget extends StatefulWidget {
+const MyStatefulWidget({super.key});
+@override
+\_MyStatefulWidgetState createState() => \_MyStatefulWidgetState();
+}
+
+class \_MyStatefulWidgetState extends State<MyStatefulWidget> {
+String \_text = "load...";
+@override
+void initState() {
+super.initState();
+\_fetchUpdatedText();
+}
+Future<void> \_fetchUpdatedText() async {
+// Simulate a delay and update the text
+var updatedText = await Future.delayed(
+const Duration(seconds: 3),
+() => "Text Updated!",
+);
+if (mounted) {
+setState(() {
+\_text = updatedText;
+});
+}
+}
+@override
+Widget build(BuildContext context) {
+return Column(
+mainAxisAlignment: MainAxisAlignment.center,
+children: <Widget>[
+Text(
+_text,
+style: const TextStyle(fontSize: 24),
+),
+],
+);
+}
+}
 
 ---
 
