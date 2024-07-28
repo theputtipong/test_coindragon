@@ -5,10 +5,8 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +19,7 @@ void main() {
           home: Scaffold(
             body: ElevatedButton(
               onPressed: () async {
-                data = await callApiData();
+                data = await callData();
               },
               child: const Text('Tap me'),
             ),
@@ -56,21 +54,31 @@ void main() {
   });
 }
 
-Future<BookModel?> callApiData() async {
-  Request request = Request('GET', Uri.parse('http://openlibrary.org/people/george08/lists.json'));
-  StreamedResponse response = await request.send();
+Future<BookModel> callData() async {
+  var value = {
+    "links": {"self": "/people/george08/lists.json"},
+    "size": 2,
+    "entries": [
+      {
+        "url": "/people/george08/lists/OL95357L",
+        "full_url": "/people/george08/lists/OL95357L/Museum_in_a_Box",
+        "name": "Museum in a Box",
+        "seed_count": 3,
+        "last_update": "2023-11-15T02:45:45.349490"
+      },
+      {
+        "url": "/people/george08/lists/OL92303L",
+        "full_url": "/people/george08/lists/OL92303L/Museums",
+        "name": "Museums",
+        "seed_count": 28,
+        "last_update": "2023-12-19T22:19:58.316154"
+      },
+    ]
+  };
 
-  if (response.statusCode == 200) {
-    BookModel data = bookModelFromJson(await response.stream.bytesToString());
-    return data;
-  } else {
-    return null;
-  }
+  BookModel data = BookModel.fromJson(value);
+  return data;
 }
-
-BookModel bookModelFromJson(String str) => BookModel.fromJson(json.decode(str));
-
-String bookModelToJson(BookModel data) => json.encode(data.toJson());
 
 class BookModel {
   Links? links;
