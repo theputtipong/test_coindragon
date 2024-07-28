@@ -420,7 +420,7 @@ child: Text(
 }
 }
 
-## PS. I usually with GoRoute lib or Get lib because it's a lot more time-saving and easy to MA later.
+-PS. I usually with GoRoute lib or Get lib because it's a lot more time-saving and easy to MA later.
 
 # Custom Widgets and UI
 
