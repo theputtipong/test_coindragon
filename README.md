@@ -154,16 +154,78 @@ I might use RepaintBoundary for widget animations or widgets that change frequen
 
 ## Describe how you would implement deep linking in a Flutter application. What are the key components involved, and how would you handle different routes?
 
-ยกตัวอย่างเป็น app ที่เกี่ยวกับ content
-ในกรณีที่เรากำหนด deep link ให้สามารถเปิด content ผ่าน id ได้ เมื่อผู้ใช้กด link url ที่กำหนดก็จะมีตัวเลือกให้เปิดเข้าแอปได้ โดยประกอบด้วย
+For example, an app content. In the case where we define a deep link to be able to open content via an id, when the user clicks on the specified url link, there will be an option to open the app, consisting of scheme = "https" host = "yourhostname.com" pathPattern = "/content/.\*" and if we want to manage the path to various pages, we will create a function to check before running the app. I will use the lib uni_links2 to check the param of the url before routing to various points.
 
-scheme = "https"
-host = "yourhostname.com"
-pathPattern = "/content/.\*"
-
-และหากต้องการจัดการเส้นทางไปยังหน้าต่างๆก็จะไปสร้างฟังก์ชั่นเช็คก่อน runapp โดยฉันจะใช้ lib uni_links2 เพื่อเช็ค param ของ url ก่อน route ไปยังจุดต่างๆ
-
+//lib uni_links2
 code example
+
+void main() {
+runApp(
+MaterialApp(
+home: ChangeNotifierProvider(
+create: (context) => CounterViewModel(),
+child: const HomeView(),
+),
+),
+);
+}
+
+class HomeView extends StatelessWidget {
+const HomeView({super.key});
+
+@override
+Widget build(BuildContext context) {
+final counter = Provider.of<CounterViewModel>(context, listen: false);
+initUniLinks(context);
+return Scaffold(
+body: Center(
+child: Column(
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+const Text(
+'You have pushed the button this many times:',
+),
+Consumer<CounterViewModel>(
+builder: (_, value, __) => Text(
+counter._counter.toString(),
+),
+),
+],
+),
+),
+floatingActionButton: FloatingActionButton(
+onPressed: counter.incrementCounter,
+child: const Icon(Icons.add),
+),
+);
+}
+}
+
+class CounterViewModel with ChangeNotifier {
+int \_counter = 0;
+
+incrementCounter() {
+\_counter++;
+notifyListeners();
+}
+}
+
+Future<void> initUniLinks(BuildContext context) async {
+try {
+await getInitialLink();
+linkStream.listen((String? link) {
+SchedulerBinding.instance.addPostFrameCallback((\_) {
+if (link != null) {
+Navigator.pushNamed(context, Approute.content, arguments: int.parse(link));
+}
+});
+}, onError: (err) {});
+} on PlatformException {
+if (kDebugMode) {
+print("PlatformException");
+}
+}
+}
 
 ---
 
@@ -231,7 +293,7 @@ child: Text(
 }
 }
 
----
+## PS. I usually with GoRoute lib or Get lib because it's a lot more time-saving and easy to MA later.
 
 # Custom Widgets and UI
 
@@ -239,9 +301,68 @@ child: Text(
 
 ## You are tasked with creating a custom reusable widget for a button that has an icon and text, with customizable colors and sizes. How would you implement this? Provide a code example.
 
+I'm not sure if the color and size is for any widget part so i let it be included for all parts, buttons, text, and icons.
+
+code example
+
+class ButtonTxtAndIcon extends StatelessWidget {
+final Color? buttonColor;
+final double? buttonHeight;
+final double? buttonWidth;
+final String? text;
+final TextStyle? textStyle;
+final IconData? icon;
+final double? iconSize;
+final Color? iconColor;
+final VoidCallback? onTap;
+const ButtonTxtAndIcon(
+{super.key,
+this.buttonColor,
+this.buttonHeight,
+this.buttonWidth,
+this.text,
+this.textStyle,
+this.icon,
+this.iconSize,
+this.iconColor,
+this.onTap});
+
+@override
+Widget build(BuildContext context) {
+return InkWell(
+onTap: onTap,
+child: Container(
+color: buttonColor ?? Colors.blue,
+height: buttonHeight,
+width: buttonWidth,
+padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+child: Row(
+children: [
+Icon(
+icon ?? Icons.broken_image,
+color: iconColor ?? Colors.white,
+size: iconSize ?? 10,
+),
+Text(
+text ?? '',
+style: textStyle,
+),
+],
+),
+),
+);
+}
+}
+
 ---
 
 ## Explain how you would implement a responsive layout in Flutter to support different screen sizes and orientations, including tablets and foldable devices.
+
+i will use Get lib to handle this case for check from tablet and foldable or mobile
+
+code example
+final scrWidth = Get.size.width;
+final scrHeight = Get.size.height;
 
 ---
 

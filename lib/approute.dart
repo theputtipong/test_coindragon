@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:test_coindragon/content_view.dart';
 import 'package:test_coindragon/feat_cart/cart_view.dart';
+
+import 'main.dart';
 
 class Approute {
   static const routeHome = '/';
@@ -26,4 +29,16 @@ class Approute {
       settings: settings,
     );
   }
+
+  static List<GetPage> get routeList => [
+        GetPage(
+          name: Approute.routeHome,
+          page: () => const HomeView(),
+          binding: BindingsBuilder(
+            () {
+              Get.put(LayoutController());
+            },
+          ),
+        ),
+      ];
 }
