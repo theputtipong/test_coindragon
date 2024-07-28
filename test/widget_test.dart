@@ -7,13 +7,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:test_coindragon/main.dart';
+import 'package:test_coindragon/feat_cart/cart_view.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const HomeView());
+    await tester.pumpWidget(const CartView());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

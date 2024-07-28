@@ -169,7 +169,67 @@ code example
 
 ## Explain how you would manage navigation state in a complex app with nested navigators. What are some best practices to follow?
 
-https://docs.flutter.dev/cookbook/effects/nested-nav
+i will create class approute and declare routename and function onGenerateRoute.
+i use class becuase it easy when review code for MA or improve
+and this best practice
+
+code example
+
+class Approute {
+static const routeHome = '/';
+static const content = '/content/';
+
+static Route onGenerateRoute(RouteSettings settings) {
+late Widget page;
+switch (settings.name) {
+case Approute.routeHome:
+page = const CartView();
+case Approute.content:
+page = ContentView(
+contentId: settings.arguments as int,
+);
+default:
+throw Exception('Unknown route: ${settings.name}');
+}
+return MaterialPageRoute<dynamic>(
+builder: (context) {
+return page;
+},
+settings: settings,
+);
+}
+}
+
+final navigatorKey = GlobalKey<NavigatorState>();
+void main() {
+runApp(
+MaterialApp(
+home: Navigator(
+key: navigatorKey,
+initialRoute: Approute.routeHome,
+onGenerateRoute: Approute.onGenerateRoute,
+),
+),
+);
+}
+
+class ContentView extends StatelessWidget {
+final int contentId;
+const ContentView({super.key, required this.contentId});
+@override
+Widget build(BuildContext context) {
+return PopScope(
+onPopInvoked: (didPop) => navigatorKey.currentState?.pop(),
+child: Scaffold(
+body: Center(
+child: Text(
+'Content View $contentId',
+),
+),
+),
+);
+}
+}
 
 ---
 

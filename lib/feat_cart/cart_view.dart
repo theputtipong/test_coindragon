@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_coindragon/approute.dart';
 import 'package:test_coindragon/feat_cart/cart_viewmodel.dart';
+
+import '../main.dart';
 
 class CartView extends StatelessWidget {
   const CartView({super.key});
@@ -14,7 +17,9 @@ class CartView extends StatelessWidget {
         title: const Text('Shopping Cart'),
       ),
       body: cartProvider.stores.isEmpty
-          ? const Center(child: Text('Your cart is empty.'))
+          ? GestureDetector(
+              onTap: () => navigatorKey.currentState?.pushNamed(Approute.content),
+              child: const Center(child: Text('Your cart is empty.')))
           : Column(
               children: [
                 Expanded(
